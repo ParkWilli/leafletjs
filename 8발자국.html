@@ -1,0 +1,442 @@
+  <!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <title>서울특별시 건축상</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+        <style>
+            html, body, #mapid{
+                height: 100%;
+                margin: 0;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id = 'mapid'>
+        </div>
+        <script>
+            var map = L.map('mapid').setView([37.5378, 127.0253], 11);
+            var osm = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+                attribution:'&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> Contributors'
+            }).addTo(map);
+            var GoogleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
+                maxZoom: 20,
+                subdomains:['mt0','mt1','mt2','mt3']
+            })
+            var GoogleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+                maxZoom: 20,
+                subdomains:['mt0','mt1','mt2','mt3']
+            })
+            var GoogleTerrain = L.tileLayer('http://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',{
+                maxZoom: 20,
+                subdomains:['mt0','mt1','mt2','mt3']
+            })
+            var GoogleHybrid = L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',{
+                maxZoom: 20,
+                subdomains:['mt0','mt1','mt2','mt3']
+            })
+            var Stamen_Watercolor = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}', {
+                attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                subdomains: 'abcd',
+                minZoom: 1,
+                maxZoom: 16,
+                ext: 'jpg'
+            });
+
+            var baseMaps = {
+                "GoogleStreetMap": GoogleStreets,
+                "GoogleSatelliteMap":GoogleSat,
+                "GoogleTerrain":GoogleTerrain,
+                "GoogleHybrid":GoogleHybrid,
+                "Watercolor":Stamen_Watercolor,
+                "OpenStreetMap":osm
+            };
+            
+            L.control.layers(baseMaps).addTo(map);
+  
+            var myIcon = L.Icon.extend({
+                options: {
+                shadowUrl: 'image/myicon_shadow.png',
+                iconSize:     [46, 62],
+                shadowSize:   [44, 22],
+                iconAnchor:   [23, 62],
+                shadowAnchor: [4, 22],
+                popupAnchor:  [0, -62]
+                }
+            });
+
+            var castleIcon = new myIcon({iconUrl: 'image/myicon_castle.png'}),
+                mountainIcon = new myIcon({iconUrl: 'image/myicon_mountain.png'}),
+                officeIcon = new myIcon({iconUrl: 'image/myicon_office.png'}),
+                buildingIcon = new myIcon({iconUrl: 'image/myicon_building.png'});
+                schoolIcon = new myIcon({iconUrl: 'image/myicon_school.png'});
+
+                L.icon = function (options) {
+                    return new L.Icon(options);
+                };
+  
+
+            //geodata 레이어 생성         
+            var part_1 = L.layerGroup();
+            var part_2 = L.layerGroup();
+            var part_3 = L.layerGroup();
+            
+            //geodata 레이어가 모두 체크되어 있도록 설정
+            map.addLayer(part_1)
+            map.addLayer(part_2)
+            map.addLayer(part_3)
+
+            //geodata 레이어 메뉴 이름 정하기
+            var overlays = {
+                "건물": part_1,
+                "학교": part_2,
+                "사무소": part_3,
+            };
+
+            //geodata 레이어 메뉴 설정 / true false / topleft topright bottomleft bottomright
+            var ctr_mapLayers = L.control.layers(null, overlays, {collapsed:false, position:'topleft'}).addTo(map);
+
+
+
+            //하단에 geoJSON을 삽입하세요! : point data
+            //var geodata =[     /*이곳에 삽입하기*/     ];
+        
+            var geodata =[
+//서울특별시 건축상 수상 건물
+{"type": "Feature", "properties": {"name": "서울서진학교", "class": "Construction", "korname": "서울서진학교", "category":"건물", "address": "강서구 양천로55길 22", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/서울서진학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.850178, 37.565185]}},
+{"type": "Feature", "properties": {"name": "JTBC빌딩", "class": "Construction", "korname": "JTBC빌딩", "category":"건물", "address": "마포구 상암산로 38", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/JTBC빌딩", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.889569, 37.5766]}},
+{"type": "Feature", "properties": {"name": "집집마당", "class": "Construction", "korname": "집집마당", "category":"건물", "address": "중랑구 중랑천로2길 22-6", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/집집마당", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.076145, 37.586148]}},
+{"type": "Feature", "properties": {"name": "클리오_사옥", "class": "Construction", "korname": "클리오_사옥", "category":"건물", "address": "성동구 성수동1가 656-447", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/클리오_사옥", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.045055, 37.543408]}},
+{"type": "Feature", "properties": {"name": "송파책박물관", "class": "Construction", "korname": "송파책박물관", "category":"건물", "address": "송파구 가락동 910", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/송파책박물관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.104534, 37.499184]}},
+{"type": "Feature", "properties": {"name": "중림창고", "class": "Construction", "korname": "중림창고", "category":"건물", "address": "중구 중림동 441-1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/중림창고", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.967149, 37.559647]}},
+{"type": "Feature", "properties": {"name": "이대서울병원_이화여자대학교_의과대학", "class": "Construction", "korname": "이대서울병원_이화여자대학교_의과대학", "category":"건물", "address": "강서구 마곡동 808", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/이대서울병원_이화여자대학교_의과대학", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.835955, 37.5563]}},
+{"type": "Feature", "properties": {"name": "브릭웰", "class": "Construction", "korname": "브릭웰", "category":"건물", "address": "종로구 통의동 35-17", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/브릭웰", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.972684, 37.577847]}},
+{"type": "Feature", "properties": {"name": "공항고등학교", "class": "Construction", "korname": "공항고등학교", "category":"건물", "address": "강서구 마곡동 733-3", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/공항고등학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.805765, 37.568768]}},
+{"type": "Feature", "properties": {"name": "마포문화비축기지", "class": "Construction", "korname": "마포문화비축기지", "category":"건물", "address": "마포구 성산동 670", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/마포문화비축기지", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.894116, 37.570951]}},
+{"type": "Feature", "properties": {"name": "아모레퍼시픽_본사사옥", "class": "Construction", "korname": "아모레퍼시픽_본사사옥", "category":"건물", "address": "용산구 한강로2가 424", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/아모레퍼시픽_본사사옥", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.968139, 37.528998]}},
+{"type": "Feature", "properties": {"name": "무목적(無目的)", "class": "Construction", "korname": "무목적(無目的)", "category":"건물", "address": "종로구 누하동 22", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/무목적(無目的)", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.968794, 37.580047]}},
+{"type": "Feature", "properties": {"name": "서소문 역사공원&역사박물관", "class": "Construction", "korname": "서소문 역사공원&역사박물관", "category":"건물", "address": "중구 의주로2가 16-4", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/서소문 역사공원&역사박물관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.969363, 37.56068]}},
+{"type": "Feature", "properties": {"name": "KB청춘마루", "class": "Construction", "korname": "KB청춘마루", "category":"건물", "address": "마포구 서교동 345-9", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/KB청춘마루", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.923016, 37.554178]}},
+{"type": "Feature", "properties": {"name": "PLACE_1", "class": "Construction", "korname": "PLACE_1", "category":"건물", "address": "강남구 삼성동 169-8", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/PLACE_1", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.064856, 37.510882]}},
+{"type": "Feature", "properties": {"name": "코오롱_One&only_타워", "class": "Construction", "korname": "코오롱_One&only_타워", "category":"건물", "address": "강서구 마곡동 788", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/코오롱_One&only_타워", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.835173, 37.564938]}},
+{"type": "Feature", "properties": {"name": "수락행복발전소", "class": "Construction", "korname": "수락행복발전소", "category":"건물", "address": "노원구 상계동 996-10", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/수락행복발전소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.059571, 37.674592]}},
+{"type": "Feature", "properties": {"name": "은혜공동체_협동조합주택", "class": "Construction", "korname": "은혜공동체_협동조합주택", "category":"건물", "address": "도봉구 도봉동 352-6", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/은혜공동체_협동조합주택", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.040805, 37.691163]}},
+{"type": "Feature", "properties": {"name": "예진이네_집수리", "class": "Construction", "korname": "예진이네_집수리", "category":"건물", "address": "종로구 부암동 329-15", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/예진이네_집수리", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.964401, 37.59135]}},
+{"type": "Feature", "properties": {"name": "한내_지혜의_숲", "class": "Construction", "korname": "한내_지혜의_숲", "category":"건물", "address": "노원구 월계동 1-1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/한내_지혜의_숲", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.069107, 37.622484]}},
+{"type": "Feature", "properties": {"name": "덕북컴퍼니_사옥", "class": "Construction", "korname": "덕북컴퍼니_사옥", "category":"건물", "address": "강남구 역삼동 652-5", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/덕북컴퍼니_사옥", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.037069, 37.507967]}},
+{"type": "Feature", "properties": {"name": "SOLO_HOUSE", "class": "Construction", "korname": "SOLO_HOUSE", "category":"건물", "address": "구로구 가리봉동 133-52", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/SOLO_HOUSE", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.89113, 37.481623]}},
+{"type": "Feature", "properties": {"name": "논현동_dA프로젝트", "class": "Construction", "korname": "논현동_dA프로젝트", "category":"건물", "address": "강남구 논현동 246-5", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/논현동_dA프로젝트", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.036534, 37.514382]}},
+{"type": "Feature", "properties": {"name": "kt_광화문빌딩_East", "class": "Construction", "korname": "kt_광화문빌딩_East", "category":"건물", "address": "종로구 청진동 244", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/kt_광화문빌딩_East", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.978567, 37.571728]}},
+{"type": "Feature", "properties": {"name": "구산동도서관마을", "class": "Construction", "korname": "구산동도서관마을", "category":"건물", "address": "은평구 구산동 17-37", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/구산동도서관마을", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.912966, 37.609698]}},
+{"type": "Feature", "properties": {"name": "경농사옥", "class": "Construction", "korname": "경농사옥", "category":"건물", "address": "서초구 서초동 1337-4", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/경농사옥", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.029076, 37.491423]}},
+{"type": "Feature", "properties": {"name": "어쩌다가게_@망원", "class": "Construction", "korname": "어쩌다가게_@망원", "category":"건물", "address": "마포구 망원동 57-194", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/어쩌다가게_@망원", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.90692, 37.554313]}},
+{"type": "Feature", "properties": {"name": "불암골_행복발전소", "class": "Construction", "korname": "불암골_행복발전소", "category":"건물", "address": "노원구 중계동 93-28", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/불암골_행복발전소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.082708, 37.650632]}},
+{"type": "Feature", "properties": {"name": "홍현:북촌마을_안내소_및_편의시설_북.촌.사.이", "class": "Construction", "korname": "홍현:북촌마을_안내소_및_편의시설_북.촌.사.이", "category":"건물", "address": "종로구 화동 2", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/홍현:북촌마을_안내소_및_편의시설_북.촌.사.이", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.983295, 37.579719]}},
+{"type": "Feature", "properties": {"name": "도천_라일락집", "class": "Construction", "korname": "도천_라일락집", "category":"건물", "address": "종로구 명륜3가 88-1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/도천_라일락집", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.99605, 37.584299]}},
+{"type": "Feature", "properties": {"name": "현대카드_뮤직라이브러리", "class": "Construction", "korname": "현대카드_뮤직라이브러리", "category":"건물", "address": "용산구 한남동 683-132", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/현대카드_뮤직라이브러리", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.000625, 37.536565]}},
+{"type": "Feature", "properties": {"name": "어둠_속의_대화_북촌", "class": "Construction", "korname": "어둠_속의_대화_북촌", "category":"건물", "address": "종로구 가회동 1-29", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/어둠_속의_대화_북촌", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.984814, 37.583303]}},
+{"type": "Feature", "properties": {"name": "논현_마트료시카", "class": "Construction", "korname": "논현_마트료시카", "category":"건물", "address": "강남구 논현동 266-15", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/논현_마트료시카", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.041453, 37.512472]}},
+{"type": "Feature", "properties": {"name": "서울강남지구_A4BL_공동주택", "class": "Construction", "korname": "서울강남지구_A4BL_공동주택", "category":"건물", "address": "강남구 자곡동 618", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/서울강남지구_A4BL_공동주택", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.091497, 37.472671]}},
+{"type": "Feature", "properties": {"name": "윤동주문학관", "class": "Construction", "korname": "윤동주문학관", "category":"건물", "address": "종로구 청운동 3-100", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/윤동주문학관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.967111, 37.592073]}},
+{"type": "Feature", "properties": {"name": "가회동_성당", "class": "Construction", "korname": "가회동_성당", "category":"건물", "address": "종로구 가회동 30-3", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/가회동_성당", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.98471, 37.58192]}},
+{"type": "Feature", "properties": {"name": "라파엘센터", "class": "Construction", "korname": "라파엘센터", "category":"건물", "address": "성북구 성북동1가 8", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/라파엘센터", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.004346, 37.588263]}},
+{"type": "Feature", "properties": {"name": "아름지기", "class": "Construction", "korname": "아름지기", "category":"건물", "address": "종로구 통의동 35-32", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/아름지기", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.973679, 37.577607]}},
+{"type": "Feature", "properties": {"name": "서울시립_북서울미술관", "class": "Construction", "korname": "서울시립_북서울미술관", "category":"건물", "address": "노원구 중계동 508", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/서울시립_북서울미술관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.067649, 37.63931]}},
+{"type": "Feature", "properties": {"name": "서울시립대_선벽원", "class": "Construction", "korname": "서울시립대_선벽원", "category":"건물", "address": "동대문구 전농동 90", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/서울시립대_선벽원", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.058776, 37.583872]}},
+{"type": "Feature", "properties": {"name": "방배동_집", "class": "Construction", "korname": "방배동_집", "category":"건물", "address": "서초구 방배동 12-38", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/방배동_집", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.992252, 37.494771]}},
+{"type": "Feature", "properties": {"name": "진관사_역사관", "class": "Construction", "korname": "진관사_역사관", "category":"건물", "address": "은평구 진관동 354-2", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/진관사_역사관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.945819, 37.637825]}},
+{"type": "Feature", "properties": {"name": "성수문화복지회관", "class": "Construction", "korname": "성수문화복지회관", "category":"건물", "address": "성동구 성수동1가 656-323", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/성수문화복지회관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.046994, 37.545422]}},
+{"type": "Feature", "properties": {"name": "숭실대학교_학생회관", "class": "Construction", "korname": "숭실대학교_학생회관", "category":"건물", "address": "동작구 상도동 511", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/숭실대학교_학생회관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.958602, 37.495521]}},
+{"type": "Feature", "properties": {"name": "전쟁과_여성인권_박물관", "class": "Construction", "korname": "전쟁과_여성인권_박물관", "category":"건물", "address": "마포구 성산동 39-13", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/전쟁과_여성인권_박물관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.914845, 37.560054]}},
+{"type": "Feature", "properties": {"name": "도화공영주차장_및_복합청사", "class": "Construction", "korname": "도화공영주차장_및_복합청사", "category":"건물", "address": "마포구 도화동 557", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/도화공영주차장_및_복합청사", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.949922, 37.541512]}},
+{"type": "Feature", "properties": {"name": "한성_백제박물관", "class": "Construction", "korname": "한성_백제박물관", "category":"건물", "address": "송파구 방이동 88-20", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/한성_백제박물관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.120648, 37.515516]}},
+{"type": "Feature", "properties": {"name": "대한민국_역사박물관", "class": "Construction", "korname": "대한민국_역사박물관", "category":"건물", "address": "종로구 세종로 82-1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/대한민국_역사박물관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.978003, 37.573934]}},
+{"type": "Feature", "properties": {"name": "서울대학교_사범교육_협력센터", "class": "Construction", "korname": "서울대학교_사범교육_협력센터", "category":"건물", "address": "관악구 신림동 산56-1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/서울대학교_사범교육_협력센터", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.953626, 37.460259]}},
+{"type": "Feature", "properties": {"name": "남산스테이트타워", "class": "Construction", "korname": "남산스테이트타워", "category":"건물", "address": "중구 회현동2가 6-11", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/남산스테이트타워", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.982948, 37.560351]}},
+{"type": "Feature", "properties": {"name": "경희대학교_무용학부관", "class": "Construction", "korname": "경희대학교_무용학부관", "category":"건물", "address": "동대문구 회기동 경희대학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/경희대학교_무용학부관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.055642, 37.596101]}},
+{"type": "Feature", "properties": {"name": "옐로우_다이아몬드", "class": "Construction", "korname": "옐로우_다이아몬드", "category":"건물", "address": "마포구 서교동 357-4", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/옐로우_다이아몬드", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.921033, 37.553104]}},
+{"type": "Feature", "properties": {"name": "타임스퀘어", "class": "Construction", "korname": "타임스퀘어", "category":"건물", "address": "영등포구 영등포동 441-10", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/타임스퀘어", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9037, 37.517088]}},
+{"type": "Feature", "properties": {"name": "탄허대종사기념박물관", "class": "Construction", "korname": "탄허대종사기념박물관", "category":"건물", "address": "강남구 자곡동 285", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/탄허대종사기념박물관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.102933, 37.479015]}},
+{"type": "Feature", "properties": {"name": "안중근_의사_기념관", "class": "Construction", "korname": "안중근_의사_기념관", "category":"건물", "address": "중구 남대문로5가 471", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/안중근_의사_기념관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.980421, 37.5539]}},
+{"type": "Feature", "properties": {"name": "서울스퀘어", "class": "Construction", "korname": "서울스퀘어", "category":"건물", "address": "중구 남대문로5가 541", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/서울스퀘어", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.973609, 37.555482]}},
+{"type": "Feature", "properties": {"name": "어반하이브", "class": "Construction", "korname": "어반하이브", "category":"건물", "address": "강남구 논현동 200-7", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/어반하이브", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.024755, 37.504906]}},
+{"type": "Feature", "properties": {"name": "이화여자대학교_캠퍼스복합단지", "class": "Construction", "korname": "이화여자대학교_캠퍼스복합단지", "category":"건물", "address": "서대문구 대현동 11-1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/이화여자대학교_캠퍼스복합단지", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.947187, 37.561795]}},
+{"type": "Feature", "properties": {"name": "논현동_의화빌딩", "class": "Construction", "korname": "논현동_의화빌딩", "category":"건물", "address": "강남구 논현동 60-4 외 1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/논현동_의화빌딩", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.029732, 37.519765]}},
+{"type": "Feature", "properties": {"name": "국립중앙박물관", "class": "Construction", "korname": "국립중앙박물관", "category":"건물", "address": "용산구 용산동6가 168-6", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/국립중앙박물관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.980787, 37.523683]}},
+{"type": "Feature", "properties": {"name": "삼성미술관_리움(1)_고미술관", "class": "Construction", "korname": "삼성미술관_리움(1)_고미술관", "category":"건물", "address": "용산구 한남동 747-18", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/삼성미술관_리움(1)_고미술관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.998851, 37.538545]}},
+{"type": "Feature", "properties": {"name": "삼성미술관_리움(2)_삼성아동교육문화센터", "class": "Construction", "korname": "삼성미술관_리움(2)_삼성아동교육문화센터", "category":"건물", "address": "용산구 한남동 747-3", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/삼성미술관_리움(2)_삼성아동교육문화센터", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.997898, 37.537889]}},
+{"type": "Feature", "properties": {"name": "삼성미술관_리움(3)_현대미술관", "class": "Construction", "korname": "삼성미술관_리움(3)_현대미술관", "category":"건물", "address": "용산구 한남동 742-1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/삼성미술관_리움(3)_현대미술관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.99882, 37.538085]}},
+{"type": "Feature", "properties": {"name": "중앙대학교_병원", "class": "Construction", "korname": "중앙대학교_병원", "category":"건물", "address": "동작구 흑석동 224-1 외 3필지", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/중앙대학교_병원", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.960639, 37.506876]}},
+{"type": "Feature", "properties": {"name": "쌈지길", "class": "Construction", "korname": "쌈지길", "category":"건물", "address": "종로구 관훈동 38", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/쌈지길", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.984881, 37.574265]}},
+{"type": "Feature", "properties": {"name": "교보생명_서초사옥", "class": "Construction", "korname": "교보생명_서초사옥", "category":"건물", "address": "서초구 서초동 1303-22", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/교보생명_서초사옥", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.024153, 37.503668]}},
+{"type": "Feature", "properties": {"name": "공군회관", "class": "Construction", "korname": "공군회관", "category":"건물", "address": "영등포구 신길동 1196", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/공군회관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.923815, 37.5102]}},
+{"type": "Feature", "properties": {"name": "포스틸타워", "class": "Construction", "korname": "포스틸타워", "category":"건물", "address": "강남구 역삼동 735-3", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/포스틸타워", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.033756, 37.499425]}},
+{"type": "Feature", "properties": {"name": "서울시립미술관", "class": "Construction", "korname": "서울시립미술관", "category":"건물", "address": "중구 서소문동 37", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/서울시립미술관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.973802, 37.564126]}},
+{"type": "Feature", "properties": {"name": "마포_문화체육센터", "class": "Construction", "korname": "마포_문화체육센터", "category":"건물", "address": "마포구 대흥동 30-3", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/마포_문화체육센터", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.945573, 37.549752]}},
+{"type": "Feature", "properties": {"name": "동부금융센터", "class": "Construction", "korname": "동부금융센터", "category":"건물", "address": "강남구 대치동 891-10 외 8", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/동부금융센터", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.054732, 37.505828]}},
+{"type": "Feature", "properties": {"name": "서울_월드컵경기장", "class": "Construction", "korname": "서울_월드컵경기장", "category":"건물", "address": "마포구 성산동 515-1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/서울_월드컵경기장", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.897413, 37.568278]}},
+{"type": "Feature", "properties": {"name": "한국산업은행", "class": "Construction", "korname": "한국산업은행", "category":"건물", "address": "영등포구 여의도동16-3", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/한국산업은행", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.920674, 37.527106]}},
+{"type": "Feature", "properties": {"name": "은평구립도서관", "class": "Construction", "korname": "은평구립도서관", "category":"건물", "address": "은평구 불광2동 산59-32", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/은평구립도서관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.928196, 37.618957]}},
+{"type": "Feature", "properties": {"name": "ASEM_및_무역센터_확충사업", "class": "Construction", "korname": "ASEM_및_무역센터_확충사업", "category":"건물", "address": "강남구 삼성동 159", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/ASEM_및_무역센터_확충사업", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.059687, 37.513147]}},
+{"type": "Feature", "properties": {"name": "서울대학교_스포츠_콤플렉스", "class": "Construction", "korname": "서울대학교_스포츠_콤플렉스", "category":"건물", "address": "관악구 신림동 149외 2필지", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/서울대학교_스포츠_콤플렉스", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.951593, 37.468308]}},
+{"type": "Feature", "properties": {"name": "거여지구_3단지_아파트", "class": "Construction", "korname": "거여지구_3단지_아파트", "category":"건물", "address": "송파구 거여2동 292 거여택지개발사업지구내 3단지", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/거여지구_3단지_아파트", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.147782, 37.489929]}},
+{"type": "Feature", "properties": {"name": "종로타워", "class": "Construction", "korname": "종로타워", "category":"건물", "address": "종로구 종로2가 6", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/종로타워", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.983565, 37.570705]}},
+{"type": "Feature", "properties": {"name": "서울시청_어린이집", "class": "Construction", "korname": "서울시청_어린이집", "category":"건물", "address": "중구 서소문동 37", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/서울시청_어린이집", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.973088, 37.563922]}},
+{"type": "Feature", "properties": {"name": "LG강남타워_및_아트센터", "class": "Construction", "korname": "LG강남타워_및_아트센터", "category":"건물", "address": "강남구 역삼동 679", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/LG강남타워_및_아트센터", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.037226, 37.50185]}},
+{"type": "Feature", "properties": {"name": "기상청_청사", "class": "Construction", "korname": "기상청_청사", "category":"건물", "address": "동작구 신대방2동 460-18", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/기상청_청사", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.917013, 37.493472]}},
+{"type": "Feature", "properties": {"name": "한국중공업_사옥", "class": "Construction", "korname": "한국중공업_사옥", "category":"건물", "address": "강남구 역삼동 838", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/한국중공업_사옥", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.032191, 37.490002]}},
+{"type": "Feature", "properties": {"name": "초록마을", "class": "Construction", "korname": "초록마을", "category":"건물", "address": "강서구 화곡동 1139", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/초록마을", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.833857, 37.54559]}},
+{"type": "Feature", "properties": {"name": "한국경제신문사_사옥", "class": "Construction", "korname": "한국경제신문사_사옥", "category":"건물", "address": "중구 중림동 441", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/한국경제신문사_사옥", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.967433, 37.559905]}},
+{"type": "Feature", "properties": {"name": "거여지구1,4단지_공동주택", "class": "Construction", "korname": "거여지구1,4단지_공동주택", "category":"건물", "address": "송파구 거여동 290, 293", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/거여지구1,4단지_공동주택", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.144295, 37.490159]}},
+{"type": "Feature", "properties": {"name": "영락교회_50주년_기념관", "class": "Construction", "korname": "영락교회_50주년_기념관", "category":"건물", "address": "중구 저동1가 6", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/영락교회_50주년_기념관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.988915, 37.563305]}},
+{"type": "Feature", "properties": {"name": "태평양파크빌라트", "class": "Construction", "korname": "태평양파크빌라트", "category":"건물", "address": "송파구 방이동 181", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/태평양파크빌라트", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.123187, 37.513341]}},
+{"type": "Feature", "properties": {"name": "가가불이街家不二", "class": "Construction", "korname": "가가불이街家不二", "category":"건물", "address": "강서구 등촌동 566-6", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/가가불이街家不二", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.862867, 37.536822]}},
+{"type": "Feature", "properties": {"name": "동국대학교_90주년기념_학술문화관", "class": "Construction", "korname": "동국대학교_90주년기념_학술문화관", "category":"건물", "address": "중구 장충동2가 산7-8", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/동국대학교_90주년기념_학술문화관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.003068, 37.558225]}},
+{"type": "Feature", "properties": {"name": "포스코센터", "class": "Construction", "korname": "포스코센터", "category":"건물", "address": "강남구 대치동 892", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/포스코센터", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.056075, 37.505741]}},
+{"type": "Feature", "properties": {"name": "대법원_청사", "class": "Construction", "korname": "대법원_청사", "category":"건물", "address": "서초구 서초동 967", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/대법원_청사", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.005395, 37.492337]}},
+{"type": "Feature", "properties": {"name": "삼성의료원", "class": "Construction", "korname": "삼성의료원", "category":"건물", "address": "강남구 일원동 50", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/삼성의료원", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.087653, 37.489003]}},
+{"type": "Feature", "properties": {"name": "전쟁기념관", "class": "Construction", "korname": "전쟁기념관", "category":"건물", "address": "용산구 용산동 1가 8", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/전쟁기념관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.977226, 37.536402]}},
+{"type": "Feature", "properties": {"name": "SBS등촌스튜디오", "class": "Construction", "korname": "SBS등촌스튜디오", "category":"건물", "address": "강서구 등촌동 58-1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/SBS등촌스튜디오", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.850152, 37.563108]}},
+{"type": "Feature", "properties": {"name": "양천신경외과", "class": "Construction", "korname": "양천신경외과", "category":"건물", "address": "양천구 신정동 978-17", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/양천신경외과", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.857378, 37.521815]}},
+{"type": "Feature", "properties": {"name": "탑_스튜디오_빌딩", "class": "Construction", "korname": "탑_스튜디오_빌딩", "category":"건물", "address": "동대문구 전농1동 648-3", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/탑_스튜디오_빌딩", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.047564, 37.575476]}},
+{"type": "Feature", "properties": {"name": "삼부빌딩", "class": "Construction", "korname": "삼부빌딩", "category":"건물", "address": "강남구 역삼1동 676", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/삼부빌딩", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.041765, 37.5038]}},
+{"type": "Feature", "properties": {"name": "성락침례교회", "class": "Construction", "korname": "성락침례교회", "category":"건물", "address": "영등포구 신길동 355-20", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/성락침례교회", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.902016, 37.504555]}},
+{"type": "Feature", "properties": {"name": "영등포구민회관_및_구의회", "class": "Construction", "korname": "영등포구민회관_및_구의회", "category":"건물", "address": "영등포구 당산동 3가 3", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/영등포구민회관_및_구의회", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.90016, 37.525769]}},
+{"type": "Feature", "properties": {"name": "섬유센터", "class": "Construction", "korname": "섬유센터", "category":"건물", "address": "강남구 대치동 944-31", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/섬유센터", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.060563, 37.507579]}},
+{"type": "Feature", "properties": {"name": "영등포_민자역사", "class": "Construction", "korname": "영등포_민자역사", "category":"건물", "address": "영등포구 영등포동 618-496, 497, 501, 502", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/영등포_민자역사", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.907069, 37.515828]}},
+{"type": "Feature", "properties": {"name": "한국통신_서울사업본부_전자교환_운영연구단", "class": "Construction", "korname": "한국통신_서울사업본부_전자교환_운영연구단", "category":"건물", "address": "서초구 우면동 17", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/한국통신_서울사업본부_전자교환_운영연구단", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.029579, 37.471325]}},
+{"type": "Feature", "properties": {"name": "연남동주택", "class": "Construction", "korname": "연남동주택", "category":"건물", "address": "마포구 연남동 566-41", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/연남동주택", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.922048, 37.560622]}},
+{"type": "Feature", "properties": {"name": "국회의원_회관", "class": "Construction", "korname": "국회의원_회관", "category":"건물", "address": "영등포구 여의도동 1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/국회의원_회관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.915971, 37.531022]}},
+{"type": "Feature", "properties": {"name": "서울_스위스그랜드_호텔", "class": "Construction", "korname": "서울_스위스그랜드_호텔", "category":"건물", "address": "서대문구 홍은동 201-1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/서울_스위스그랜드_호텔", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.934525, 37.588766]}},
+{"type": "Feature", "properties": {"name": "국제방송센터", "class": "Construction", "korname": "국제방송센터", "category":"건물", "address": "영등포구 여의도동 18", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/국제방송센터", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.916437, 37.525548]}},
+{"type": "Feature", "properties": {"name": "건국대학교_상허기념도서관", "class": "Construction", "korname": "건국대학교_상허기념도서관", "category":"건물", "address": "광진구 화양동 1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/건국대학교_상허기념도서관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.074186, 37.542108]}},
+{"type": "Feature", "properties": {"name": "신도사무기_사옥", "class": "Construction", "korname": "신도사무기_사옥", "category":"건물", "address": "강남구 대치동 943-27", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/신도사무기_사옥", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.05972, 37.506511]}},
+{"type": "Feature", "properties": {"name": "에스모드_빌딩", "class": "Construction", "korname": "에스모드_빌딩", "category":"건물", "address": "강남구 신사동 528-8", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/에스모드_빌딩", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.020324, 37.522693]}},
+{"type": "Feature", "properties": {"name": "을지로2가_재개발사업(1)", "class": "Construction", "korname": "을지로2가_재개발사업(1)", "category":"건물", "address": "중구 장교동 1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/을지로2가_재개발사업(1)", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.986753, 37.567289]}},
+{"type": "Feature", "properties": {"name": "을지로2가_재개발사업(2)", "class": "Construction", "korname": "을지로2가_재개발사업(2)", "category":"건물", "address": "중구 장교동 1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/을지로2가_재개발사업(2)", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.986753, 37.567289]}},
+{"type": "Feature", "properties": {"name": "을지로2가_재개발사업(3)", "class": "Construction", "korname": "을지로2가_재개발사업(3)", "category":"건물", "address": "중구 장교동 1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/을지로2가_재개발사업(3)", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.986753, 37.567289]}},
+{"type": "Feature", "properties": {"name": "대우투자금융사옥", "class": "Construction", "korname": "대우투자금융사옥", "category":"건물", "address": "영등포구 여의도동 34-3", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/대우투자금융사옥", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.929744, 37.522307]}},
+{"type": "Feature", "properties": {"name": "제일은행_본점", "class": "Construction", "korname": "제일은행_본점", "category":"건물", "address": "종로구 공평동 100", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/제일은행_본점", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.982305, 37.570708]}},
+{"type": "Feature", "properties": {"name": "럭키금성_다동빌딩", "class": "Construction", "korname": "럭키금성_다동빌딩", "category":"건물", "address": "중구 다동 85", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/럭키금성_다동빌딩", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.982246, 37.56835]}},
+{"type": "Feature", "properties": {"name": "서울투자금융_사옥", "class": "Construction", "korname": "서울투자금융_사옥", "category":"건물", "address": "중구 을지로2가 198", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/서울투자금융_사옥", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.983489, 37.565571]}},
+{"type": "Feature", "properties": {"name": "동일빌딩", "class": "Construction", "korname": "동일빌딩", "category":"건물", "address": "강남구 대치동 944-1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/동일빌딩", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.060038, 37.507361]}},
+{"type": "Feature", "properties": {"name": "올림픽_역도경기장", "class": "Construction", "korname": "올림픽_역도경기장", "category":"건물", "address": "송파구 방이동 88-2", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/올림픽_역도경기장", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.129535, 37.516561]}},
+{"type": "Feature", "properties": {"name": "86_서울아시아대회_선수촌", "class": "Construction", "korname": "86_서울아시아대회_선수촌", "category":"건물", "address": "송파구 잠실동 86", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/86_서울아시아대회_선수촌", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.076653, 37.507506]}},
+{"type": "Feature", "properties": {"name": "힐튼호텔", "class": "Construction", "korname": "힐튼호텔", "category":"건물", "address": "중구 회현동 395", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/힐튼호텔", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.975426, 37.555513]}},
+{"type": "Feature", "properties": {"name": "사랑의_교회", "class": "Construction", "korname": "사랑의_교회", "category":"건물", "address": "서초구 서초동 1310-16", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/사랑의_교회", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.023689, 37.500645]}},
+{"type": "Feature", "properties": {"name": "GKS주택", "class": "Construction", "korname": "GKS주택", "category":"건물", "address": "성북구 성북동 330-542", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/GKS주택", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.987664, 37.595851]}},
+{"type": "Feature", "properties": {"name": "강남원_효성빌라", "class": "Construction", "korname": "강남원_효성빌라", "category":"건물", "address": "서초구 반포동 591-1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/강남원_효성빌라", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.995617, 37.495558]}},
+{"type": "Feature", "properties": {"name": "한국수출입은행_본점", "class": "Construction", "korname": "한국수출입은행_본점", "category":"건물", "address": "영등포구 여의도동 16-1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/한국수출입은행_본점", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.923432, 37.52866]}},
+{"type": "Feature", "properties": {"name": "국제그룹사옥", "class": "Construction", "korname": "국제그룹사옥", "category":"건물", "address": "용산구 한강로2가 191", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/국제그룹사옥", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.967589, 37.527882]}},
+{"type": "Feature", "properties": {"name": "고운빌딩", "class": "Construction", "korname": "고운빌딩", "category":"건물", "address": "강남구 역삼동 646-18", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/고운빌딩", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.034937, 37.500585]}},
+{"type": "Feature", "properties": {"name": "교통회관", "class": "Construction", "korname": "교통회관", "category":"건물", "address": "송파구 신천동 11-7 서울시교통회관", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/교통회관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.105553, 37.51566]}},
+{"type": "Feature", "properties": {"name": "삼천리산업_본사", "class": "Construction", "korname": "삼천리산업_본사", "category":"건물", "address": "영등포구 여의도동 35-6", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/삼천리산업_본사", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.925538, 37.520885]}},
+{"type": "Feature", "properties": {"name": "한국외환은행_직원합숙소", "class": "Construction", "korname": "한국외환은행_직원합숙소", "category":"건물", "address": "송파구 풍남동 281-1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/한국외환은행_직원합숙소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.113377, 37.532105]}},
+{"type": "Feature", "properties": {"name": "MBC_여의도스튜디오", "class": "Construction", "korname": "MBC_여의도스튜디오", "category":"건물", "address": "영등포구 여의도동 31", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/MBC_여의도스튜디오", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.930024, 37.523881]}},
+{"type": "Feature", "properties": {"name": "주한_말레이시아_대사관", "class": "Construction", "korname": "주한_말레이시아_대사관", "category":"건물", "address": "용산구 한남1동 4-1", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/주한_말레이시아_대사관", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.012159, 37.537677]}},
+
+
+//서울특별시 건축상 수상자 출신 학교
+{"type": "Feature", "properties": {"name": "경희대학교", "class": "School", "korname": "경희대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/경희대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.051715658056, 37.5971869268004]}},
+{"type": "Feature", "properties": {"name": "고려대학교", "class": "School", "korname": "고려대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/고려대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.025347184453, 37.5835537316069]}},
+{"type": "Feature", "properties": {"name": "하버드대학교", "class": "School", "korname": "하버드대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/하버드대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-71.1166601020357, 42.377153466622]}},
+{"type": "Feature", "properties": {"name": "서울시립대학교", "class": "School", "korname": "서울시립대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/서울시립대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.059014021171, 37.5839255212732]}},
+{"type": "Feature", "properties": {"name": "서울대학교", "class": "School", "korname": "서울대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/서울대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.95079785551, 37.4562089330821]}},
+{"type": "Feature", "properties": {"name": "미시건대학교", "class": "School", "korname": "미시건대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/미시건대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-83.7382246646714, 42.2780877568702]}},
+{"type": "Feature", "properties": {"name": "오하이오대학교", "class": "School", "korname": "오하이오대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/오하이오대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-82.1013352579358, 39.3244658730209]}},
+{"type": "Feature", "properties": {"name": "뉴멕시코주립대학교", "class": "School", "korname": "뉴멕시코주립대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/뉴멕시코주립대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-106.749009693866, 32.279408571982]}},
+{"type": "Feature", "properties": {"name": "연세대학교", "class": "School", "korname": "연세대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/연세대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.93533614202, 37.5625584676869]}},
+{"type": "Feature", "properties": {"name": "EMU", "class": "School", "korname": "EMU", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/EMU", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-83.6239693933633, 42.2508029742037]}},
+{"type": "Feature", "properties": {"name": "충북대학교", "class": "School", "korname": "충북대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/충북대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.458273982588, 36.6266677464552]}},
+{"type": "Feature", "properties": {"name": "한양대학교", "class": "School", "korname": "한양대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/한양대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.046359602051, 37.5571970037697]}},
+{"type": "Feature", "properties": {"name": "런던대학교_바틀렛도시계획대학원", "class": "School", "korname": "런던대학교_바틀렛도시계획대학원", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/런던대학교_바틀렛도시계획대학원", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-0.132825857585694, 51.5258234804793]}},
+{"type": "Feature", "properties": {"name": "한국예술종합학교", "class": "School", "korname": "한국예술종합학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/한국예술종합학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.058302393113, 37.602735919792]}},
+{"type": "Feature", "properties": {"name": "한양대학교", "class": "School", "korname": "한양대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/한양대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.046374855602, 37.5548587721075]}},
+{"type": "Feature", "properties": {"name": "베를라헤_건축대학원", "class": "School", "korname": "베를라헤_건축대학원", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/베를라헤_건축대학원", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [4.37001950821686, 52.009770077491]}},
+{"type": "Feature", "properties": {"name": "동아대학교", "class": "School", "korname": "동아대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/동아대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [128.968248275877, 35.1163487374062]}},
+{"type": "Feature", "properties": {"name": "스위스취리히연방공과대학", "class": "School", "korname": "스위스취리히연방공과대학", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/스위스취리히연방공과대학", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [8.54762470663976, 47.3764304425665]}},
+{"type": "Feature", "properties": {"name": "킹스턴 스쿨 오브 아프", "class": "School", "korname": "킹스턴 스쿨 오브 아프", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/킹스턴 스쿨 오브 아프", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-0.298738783141537, 51.405103729585]}},
+{"type": "Feature", "properties": {"name": "영국 AA 스쿨", "class": "School", "korname": "영국 AA 스쿨", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/영국 AA 스쿨", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-0.131021232445237, 51.5185682595033]}},
+{"type": "Feature", "properties": {"name": "경기대학교", "class": "School", "korname": "경기대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/경기대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.962344336659, 37.5649667021538]}},
+{"type": "Feature", "properties": {"name": "펜실베니아대학교", "class": "School", "korname": "펜실베니아대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/펜실베니아대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-75.1910064462593, 39.9517522565904]}},
+{"type": "Feature", "properties": {"name": "카네기멜론대학교", "class": "School", "korname": "카네기멜론대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/카네기멜론대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-79.9428558057451, 40.4433574760378]}},
+{"type": "Feature", "properties": {"name": "홍익대학교", "class": "School", "korname": "홍익대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/홍익대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.926472593996, 37.5517692610315]}},
+{"type": "Feature", "properties": {"name": "UCLA", "class": "School", "korname": "UCLA", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/UCLA", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-118.443771799064, 34.0689025411225]}},
+{"type": "Feature", "properties": {"name": "국립 베르사유고등건축학교", "class": "School", "korname": "국립 베르사유고등건축학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/국립 베르사유고등건축학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [2.12713218466437, 48.8017797128988]}},
+{"type": "Feature", "properties": {"name": "파리 8대학교", "class": "School", "korname": "파리 8대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/파리 8대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [2.36237648281939, 48.9455643547457]}},
+{"type": "Feature", "properties": {"name": "영남대학교", "class": "School", "korname": "영남대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/영남대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [128.754377753645, 35.8307771546561]}},
+{"type": "Feature", "properties": {"name": "옥스포드 브룩스대학교", "class": "School", "korname": "옥스포드 브룩스대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/옥스포드 브룩스대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-1.22421712554402, 51.75498946133]}},
+{"type": "Feature", "properties": {"name": "파리-벨빌 국립고등건축학교", "class": "School", "korname": "파리-벨빌 국립고등건축학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/파리-벨빌 국립고등건축학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [2.38197796932411, 48.8742840486049]}},
+{"type": "Feature", "properties": {"name": "동국대학교", "class": "School", "korname": "동국대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/동국대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.998676942752, 37.5590692177716]}},
+{"type": "Feature", "properties": {"name": "중앙대학교", "class": "School", "korname": "중앙대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/중앙대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.957785653682, 37.5037478520254]}},
+{"type": "Feature", "properties": {"name": "성균관대학교", "class": "School", "korname": "성균관대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/성균관대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.977180784362, 37.294010413323]}},
+{"type": "Feature", "properties": {"name": "도쿄대학교", "class": "School", "korname": "도쿄대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/도쿄대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [139.762013834183, 35.7126733885557]}},
+{"type": "Feature", "properties": {"name": "덴버대학교", "class": "School", "korname": "덴버대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/덴버대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-104.961503044416, 39.6745530092259]}},
+{"type": "Feature", "properties": {"name": "이화여자대학교", "class": "School", "korname": "이화여자대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/이화여자대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.948358240191, 37.5666544672473]}},
+{"type": "Feature", "properties": {"name": "캘리포니아대학교", "class": "School", "korname": "캘리포니아대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/캘리포니아대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-122.25853990213, 37.8720600940842]}},
+{"type": "Feature", "properties": {"name": "콜롬비아대학교", "class": "School", "korname": "콜롬비아대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/콜롬비아대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-73.9601199308957, 40.8096468689138]}},
+{"type": "Feature", "properties": {"name": "국민대학교", "class": "School", "korname": "국민대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/국민대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.993975470876, 37.6119132606691]}},
+{"type": "Feature", "properties": {"name": "에콜 데 보자르", "class": "School", "korname": "에콜 데 보자르", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/에콜 데 보자르", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-0.557052155517172, 44.9214868322656]}},
+{"type": "Feature", "properties": {"name": "파리 기술대학교", "class": "School", "korname": "파리 기술대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/파리 기술대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [2.33511620361223, 48.8535868017835]}},
+{"type": "Feature", "properties": {"name": "파리 과학인문학대학교사회과학고등연구원", "class": "School", "korname": "파리 과학인문학대학교사회과학고등연구원", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/파리 과학인문학대학교사회과학고등연구원", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [2.32696671535058, 48.8503010573148]}},
+{"type": "Feature", "properties": {"name": "베를린대학교", "class": "School", "korname": "베를린대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/베를린대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [13.3936658271062, 52.5179613234798]}},
+{"type": "Feature", "properties": {"name": "미네소타대학교", "class": "School", "korname": "미네소타대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/미네소타대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-93.2371067404852, 44.9757227106978]}},
+{"type": "Feature", "properties": {"name": "밀라노 예술대학교", "class": "School", "korname": "밀라노 예술대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/밀라노 예술대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [9.19493834963691, 45.4602262569232]}},
+{"type": "Feature", "properties": {"name": "베니스 건축대학", "class": "School", "korname": "베니스 건축대학", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/베니스 건축대학", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [12.3223404268541, 45.4378891233051]}},
+{"type": "Feature", "properties": {"name": "코넬대학교", "class": "School", "korname": "코넬대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/코넬대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-76.4735027020183, 42.4534412631698]}},
+{"type": "Feature", "properties": {"name": "UIUC", "class": "School", "korname": "UIUC", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/UIUC", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-88.2271829597488, 40.1020343441638]}},
+{"type": "Feature", "properties": {"name": "부에노스아이레스대학교", "class": "School", "korname": "부에노스아이레스대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/부에노스아이레스대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-58.3730695001882, -34.599525415626]}},
+{"type": "Feature", "properties": {"name": "부산대학교", "class": "School", "korname": "부산대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/부산대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [129.081157187629, 35.2306024972002]}},
+{"type": "Feature", "properties": {"name": "버클리대학교", "class": "School", "korname": "버클리대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/버클리대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-122.258995477142, 37.8738628968401]}},
+{"type": "Feature", "properties": {"name": "Paris-La_Villette 건축설계학원", "class": "School", "korname": "Paris-La_Villette 건축설계학원", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/Paris-La_Villette 건축설계학원", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [2.38106912699588, 48.8938749842736]}},
+{"type": "Feature", "properties": {"name": "미시간 주립대학교", "class": "School", "korname": "미시간 주립대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/미시간 주립대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-84.4821611731762, 42.7019977853123]}},
+{"type": "Feature", "properties": {"name": "요코하마 국립대학교", "class": "School", "korname": "요코하마 국립대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/요코하마 국립대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [139.590916170829, 35.4734085156027]}},
+{"type": "Feature", "properties": {"name": "일리노이공과대학교", "class": "School", "korname": "일리노이공과대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/일리노이공과대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-87.6269093425138, 41.8350009788712]}},
+{"type": "Feature", "properties": {"name": "한밭대학교", "class": "School", "korname": "한밭대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/한밭대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.301187368999, 36.3509700826857]}},
+{"type": "Feature", "properties": {"name": "인하대학교", "class": "School", "korname": "인하대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/인하대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.654880369023, 37.4502924633173]}},
+{"type": "Feature", "properties": {"name": "프리스턴대학교", "class": "School", "korname": "프리스턴대학교", "category": "학교", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/프리스턴대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-74.6551060887749, 40.3430451154295]}},
+
+//서울특별시 건축상 수상자 건축사무소
+{"type": "Feature", "properties": {"name": "코어건축사무소", "class": "Office", "korname": "코어건축사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/코어건축사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9677397, 37.53945445]}},
+{"type": "Feature", "properties": {"name": "더시스템랩건축사사무소", "class": "Office", "korname": "더시스템랩건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/더시스템랩건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.125831, 37.39136836]}},
+{"type": "Feature", "properties": {"name": "볼드아키텍츠건축사사무소", "class": "Office", "korname": "볼드아키텍츠건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/볼드아키텍츠건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.076856, 37.55290878]}},
+{"type": "Feature", "properties": {"name": "건축사사무소오씨에이", "class": "Office", "korname": "건축사사무소오씨에이", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/건축사사무소오씨에이", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9205673, 37.56351811]}},
+{"type": "Feature", "properties": {"name": "종합건축사사무소건원", "class": "Office", "korname": "종합건축사사무소건원", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/종합건축사사무소건원", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0133973, 37.48482889]}},
+{"type": "Feature", "properties": {"name": "건축사사무소에브리아키텍츠", "class": "Office", "korname": "건축사사무소에브리아키텍츠", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/건축사사무소에브리아키텍츠", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9952291, 37.56043165]}},
+{"type": "Feature", "properties": {"name": "정림건축종합건축사사무소", "class": "Office", "korname": "정림건축종합건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/정림건축종합건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9767976, 37.56166407]}},
+{"type": "Feature", "properties": {"name": "건축사사무소에스오에이", "class": "Office", "korname": "건축사사무소에스오에이", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/건축사사무소에스오에이", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9723552, 37.56601451]}},
+{"type": "Feature", "properties": {"name": "이집건축사사무소", "class": "Office", "korname": "이집건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/이집건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9100099, 37.54900832]}},
+{"type": "Feature", "properties": {"name": "팀텐건축사사무소", "class": "Office", "korname": "팀텐건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/팀텐건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.4872346, 36.66983633]}},
+{"type": "Feature", "properties": {"name": "데이비드치퍼필드건축사사무소", "class": "Office", "korname": "데이비드치퍼필드건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/데이비드치퍼필드건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-0.1275883077, 51.50722759]}},
+{"type": "Feature", "properties": {"name": "건축사사무소moldproject", "class": "Office", "korname": "건축사사무소moldproject", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/건축사사무소moldproject", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0016482, 37.56085319]}},
+{"type": "Feature", "properties": {"name": "레스건축", "class": "Office", "korname": "레스건축", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/레스건축", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0290992, 37.51676294]}},
+{"type": "Feature", "properties": {"name": "보이드아키텍트건축사사무소", "class": "Office", "korname": "보이드아키텍트건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/보이드아키텍트건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9971614, 37.49861807]}},
+{"type": "Feature", "properties": {"name": "건축사사무소인터커드", "class": "Office", "korname": "건축사사무소인터커드", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/건축사사무소인터커드", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9283003, 37.55733462]}},
+{"type": "Feature", "properties": {"name": "홍익대학교건축대학", "class": "Office", "korname": "홍익대학교건축대학", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/홍익대학교건축대학", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.925701, 37.55097693]}},
+{"type": "Feature", "properties": {"name": "종합건축사사무소시담", "class": "Office", "korname": "종합건축사사무소시담", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/종합건축사사무소시담", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.8942832, 37.53993531]}},
+{"type": "Feature", "properties": {"name": "운생동건축사사무소", "class": "Office", "korname": "운생동건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/운생동건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0035415, 37.58960208]}},
+{"type": "Feature", "properties": {"name": "어반토폴로지", "class": "Office", "korname": "어반토폴로지", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/어반토폴로지", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.1159316, 37.67361163]}},
+{"type": "Feature", "properties": {"name": "종합건축사사무소온고당", "class": "Office", "korname": "종합건축사사무소온고당", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/종합건축사사무소온고당", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0309922, 37.51896521]}},
+{"type": "Feature", "properties": {"name": "엔이이디건축사사무소", "class": "Office", "korname": "엔이이디건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/엔이이디건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0842402, 37.49128365]}},
+{"type": "Feature", "properties": {"name": "TOPOS건축사사무소", "class": "Office", "korname": "TOPOS건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/TOPOS건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0335834, 37.4971804]}},
+{"type": "Feature", "properties": {"name": "스페이스연건축사사무소", "class": "Office", "korname": "스페이스연건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/스페이스연건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0406845, 37.48933]}},
+{"type": "Feature", "properties": {"name": "삼우종합건축사사무소", "class": "Office", "korname": "삼우종합건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/삼우종합건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.132008, 37.53731936]}},
+{"type": "Feature", "properties": {"name": "디자인그룹오즈건축사사무소", "class": "Office", "korname": "디자인그룹오즈건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/디자인그룹오즈건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.042843, 37.49327582]}},
+{"type": "Feature", "properties": {"name": "종합건축사사무소연미건축", "class": "Office", "korname": "종합건축사사무소연미건축", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/종합건축사사무소연미건축", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9906751, 37.48499687]}},
+{"type": "Feature", "properties": {"name": "건축사사무소에스에스에이아이", "class": "Office", "korname": "건축사사무소에스에스에이아이", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/건축사사무소에스에스에이아이", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9069201, 37.55431017]}},
+{"type": "Feature", "properties": {"name": "유림피엔씨건축사사무소", "class": "Office", "korname": "유림피엔씨건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/유림피엔씨건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0449874, 37.48179195]}},
+{"type": "Feature", "properties": {"name": "가아건축사사무소", "class": "Office", "korname": "가아건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/가아건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0161458, 37.49159408]}},
+{"type": "Feature", "properties": {"name": "와이즈건축", "class": "Office", "korname": "와이즈건축", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/와이즈건축", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0211614, 37.55265948]}},
+{"type": "Feature", "properties": {"name": "로디자인도시환경건축연구소", "class": "Office", "korname": "로디자인도시환경건축연구소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/로디자인도시환경건축연구소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0323825, 37.49438938]}},
+{"type": "Feature", "properties": {"name": "협동원건축사사무소", "class": "Office", "korname": "협동원건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/협동원건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0231655, 37.57028705]}},
+{"type": "Feature", "properties": {"name": "아뜰리에리옹서울", "class": "Office", "korname": "아뜰리에리옹서울", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/아뜰리에리옹서울", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9171091, 37.54833541]}},
+{"type": "Feature", "properties": {"name": "건축사사무소오퍼스", "class": "Office", "korname": "건축사사무소오퍼스", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/건축사사무소오퍼스", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.1193575, 37.48514715]}},
+{"type": "Feature", "properties": {"name": "경영위치건축사사무소", "class": "Office", "korname": "경영위치건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/경영위치건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9803314, 37.54684675]}},
+{"type": "Feature", "properties": {"name": "건축사사무소엠에이알유", "class": "Office", "korname": "건축사사무소엠에이알유", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/건축사사무소엠에이알유", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9932108, 37.48107721]}},
+{"type": "Feature", "properties": {"name": "명원종합건축", "class": "Office", "korname": "명원종합건축", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/명원종합건축", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0492936, 37.47469386]}},
+{"type": "Feature", "properties": {"name": "서울시립대학교", "class": "Office", "korname": "서울시립대학교", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/서울시립대학교", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0590221, 37.58390672]}},
+{"type": "Feature", "properties": {"name": "솔토건축사사무소", "class": "Office", "korname": "솔토건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/솔토건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.042424, 37.48102573]}},
+{"type": "Feature", "properties": {"name": "구가도시건축", "class": "Office", "korname": "구가도시건축", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/구가도시건축", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9688836, 37.58797068]}},
+{"type": "Feature", "properties": {"name": "금성종합건축사사무소", "class": "Office", "korname": "금성종합건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/금성종합건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9847484, 37.49625575]}},
+{"type": "Feature", "properties": {"name": "이온에스엘디", "class": "Office", "korname": "이온에스엘디", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/이온에스엘디", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0153067, 37.48761045]}},
+{"type": "Feature", "properties": {"name": "소리건축연구소", "class": "Office", "korname": "소리건축연구소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/소리건축연구소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0452347, 37.47661915]}},
+{"type": "Feature", "properties": {"name": "건축사사무소한울건축", "class": "Office", "korname": "건축사사무소한울건축", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/건축사사무소한울건축", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9976807, 37.49621056]}},
+{"type": "Feature", "properties": {"name": "건축사사무소아르키움", "class": "Office", "korname": "건축사사무소아르키움", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/건축사사무소아르키움", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0498463, 37.56839021]}},
+{"type": "Feature", "properties": {"name": "도미니크페로아키텍처", "class": "Office", "korname": "도미니크페로아키텍처", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/도미니크페로아키텍처", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [2.352402769, 48.85650376]}},
+{"type": "Feature", "properties": {"name": "범건축종합건축사사무소", "class": "Office", "korname": "범건축종합건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/범건축종합건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.1226925, 37.48153834]}},
+{"type": "Feature", "properties": {"name": "종합건축사사무소시건축", "class": "Office", "korname": "종합건축사사무소시건축", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/종합건축사사무소시건축", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9888201, 37.58300425]}},
+{"type": "Feature", "properties": {"name": "태우건축", "class": "Office", "korname": "태우건축", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/태우건축", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9453723, 37.48674613]}},
+{"type": "Feature", "properties": {"name": "O.M.A", "class": "Office", "korname": "O.M.A", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/O.M.A", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [4.490821773, 51.92070382]}},
+{"type": "Feature", "properties": {"name": "장누벨건축사사무소", "class": "Office", "korname": "장누벨건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/장누벨건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [2.352402769, 48.85650376]}},
+{"type": "Feature", "properties": {"name": "창조종합건축사사무소", "class": "Office", "korname": "창조종합건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/창조종합건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.912267, 37.52050024]}},
+{"type": "Feature", "properties": {"name": "원양건축사사무소", "class": "Office", "korname": "원양건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/원양건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0503802, 37.50649694]}},
+{"type": "Feature", "properties": {"name": "포스에이씨종합감리건축사사무소", "class": "Office", "korname": "포스에이씨종합감리건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/포스에이씨종합감리건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.6441504, 37.38916704]}},
+{"type": "Feature", "properties": {"name": "희림종합건축사사무소", "class": "Office", "korname": "희림종합건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/희림종합건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.1724073, 37.55068586]}},
+{"type": "Feature", "properties": {"name": "신도시종합건축사사무소", "class": "Office", "korname": "신도시종합건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/신도시종합건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0439901, 37.4742749]}},
+{"type": "Feature", "properties": {"name": "종합건축사사무소이공", "class": "Office", "korname": "종합건축사사무소이공", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/종합건축사사무소이공", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0415479, 37.47827999]}},
+{"type": "Feature", "properties": {"name": "맥건축", "class": "Office", "korname": "맥건축", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/맥건축", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.8320347, 37.31867905]}},
+{"type": "Feature", "properties": {"name": "해안건축", "class": "Office", "korname": "해안건축", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/해안건축", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0348278, 37.50727284]}},
+{"type": "Feature", "properties": {"name": "라파엘비뇰리건축사무소", "class": "Office", "korname": "라파엘비뇰리건축사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/라파엘비뇰리건축사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [-74.00608046, 40.71274185]}},
+{"type": "Feature", "properties": {"name": "건축사사무소힘마", "class": "Office", "korname": "건축사사무소힘마", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/건축사사무소힘마", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0300112, 37.5032791]}},
+{"type": "Feature", "properties": {"name": "원도시건축건축사사무소", "class": "Office", "korname": "원도시건축건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/원도시건축건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0197276, 37.52143195]}},
+{"type": "Feature", "properties": {"name": "한빛종합건축사사무소", "class": "Office", "korname": "한빛종합건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/한빛종합건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0361507, 37.51774517]}},
+{"type": "Feature", "properties": {"name": "토문엔지니어링건축사사무소", "class": "Office", "korname": "토문엔지니어링건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/토문엔지니어링건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.1224942, 37.47741327]}},
+{"type": "Feature", "properties": {"name": "건축사사무소정주건축연구소", "class": "Office", "korname": "건축사사무소정주건축연구소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/건축사사무소정주건축연구소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0441944, 37.47753308]}},
+{"type": "Feature", "properties": {"name": "건원국제종합건축사사무소", "class": "Office", "korname": "건원국제종합건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/건원국제종합건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0392807, 37.49774847]}},
+{"type": "Feature", "properties": {"name": "로가후리건축사사무소(오래됨)", "class": "Office", "korname": "로가후리건축사사무소(오래됨)", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/로가후리건축사사무소(오래됨)", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.9230898, 36.99494131]}},
+{"type": "Feature", "properties": {"name": "로가후리건축사사무소", "class": "Office", "korname": "로가후리건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/로가후리건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.9230898, 36.99494131]}},
+{"type": "Feature", "properties": {"name": "간삼파트너스종합건축사사무소(되게 오래된 사무소)", "class": "Office", "korname": "간삼파트너스종합건축사사무소(되게 오래된 사무소)", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/간삼파트너스종합건축사사무소(되게 오래된 사무소)", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0093257, 37.5584204]}},
+{"type": "Feature", "properties": {"name": "간삼파트너스종합건축사사무소", "class": "Office", "korname": "간삼파트너스종합건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/간삼파트너스종합건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0093257, 37.5584204]}},
+{"type": "Feature", "properties": {"name": "한울종합건축사사무소", "class": "Office", "korname": "한울종합건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/한울종합건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9976891, 37.49620748]}},
+{"type": "Feature", "properties": {"name": "일건씨앤씨건축사사무소", "class": "Office", "korname": "일건씨앤씨건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/일건씨앤씨건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0161487, 37.49159296]}},
+{"type": "Feature", "properties": {"name": "종합건축사사무소인제건축", "class": "Office", "korname": "종합건축사사무소인제건축", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/종합건축사사무소인제건축", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0498526, 37.56839127]}},
+{"type": "Feature", "properties": {"name": "종합건축사사무소탑", "class": "Office", "korname": "종합건축사사무소탑", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/종합건축사사무소탑", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.1221521, 37.48524724]}},
+{"type": "Feature", "properties": {"name": "공간종합건축사사무소", "class": "Office", "korname": "공간종합건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/공간종합건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9950171, 37.55556788]}},
+{"type": "Feature", "properties": {"name": "인우건축사사무소", "class": "Office", "korname": "인우건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/인우건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.8250796, 35.19036291]}},
+{"type": "Feature", "properties": {"name": "서한종합건축사사무소", "class": "Office", "korname": "서한종합건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/서한종합건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0362552, 37.51170397]}},
+{"type": "Feature", "properties": {"name": "김영섭건축문화건축사사무소", "class": "Office", "korname": "김영섭건축문화건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/김영섭건축문화건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9271906, 37.57124688]}},
+{"type": "Feature", "properties": {"name": "서울건축종합건축사사무소", "class": "Office", "korname": "서울건축종합건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/서울건축종합건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9154534, 37.56187377]}},
+{"type": "Feature", "properties": {"name": "김중업종합건축사사무소", "class": "Office", "korname": "김중업종합건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/김중업종합건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0436811, 37.47096992]}},
+{"type": "Feature", "properties": {"name": "아도무종합건축사사무소", "class": "Office", "korname": "아도무종합건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/아도무종합건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0462844, 37.48404695]}},
+{"type": "Feature", "properties": {"name": "그룹가건축도시연구소", "class": "Office", "korname": "그룹가건축도시연구소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/그룹가건축도시연구소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9876763, 37.59584896]}},
+{"type": "Feature", "properties": {"name": "한울국제건축사사무소", "class": "Office", "korname": "한울국제건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/한울국제건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9976874, 37.49621223]}},
+{"type": "Feature", "properties": {"name": "화신엔지니어링종합건축", "class": "Office", "korname": "화신엔지니어링종합건축", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/화신엔지니어링종합건축", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [128.8781635, 37.75518588]}},
+{"type": "Feature", "properties": {"name": "우일종합건축사사무소", "class": "Office", "korname": "우일종합건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/우일종합건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0283105, 37.50588311]}},
+{"type": "Feature", "properties": {"name": "선진엔지니어링종합건축사사무소", "class": "Office", "korname": "선진엔지니어링종합건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/선진엔지니어링종합건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9702073, 37.39981482]}},
+{"type": "Feature", "properties": {"name": "우원건축사사무소", "class": "Office", "korname": "우원건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/우원건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [129.3397195, 36.02304923]}},
+{"type": "Feature", "properties": {"name": "일건건축사사무소", "class": "Office", "korname": "일건건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/일건건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9965318, 37.49327588]}},
+{"type": "Feature", "properties": {"name": "가나건축사사무소", "class": "Office", "korname": "가나건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/가나건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0204067, 37.49447676]}},
+{"type": "Feature", "properties": {"name": "에스디건축사사무소", "class": "Office", "korname": "에스디건축사사무소", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/에스디건축사사무소", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0233163, 37.50438538]}},
+{"type": "Feature", "properties": {"name": "주식회사 디에스스튜디오", "class": "Office", "korname": "주식회사 디에스스튜디오", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/주식회사 디에스스튜디오", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [127.0384971, 37.48267512]}},
+{"type": "Feature", "properties": {"name": "신조건축", "class": "Office", "korname": "신조건축", "category": "사무소", "url": "http://dh.aks.ac.kr/~jisun/edu/index.php/신조건축", "refurl": "null"}, "geometry": {"type": "Point", "coordinates": [126.9333043, 37.59290878]}},
+
+];  
+
+
+
+            //포인트 데이터 설정
+            L.geoJson(geodata, {
+                onEachFeature: function (feature, layer) {
+                            layer.bindPopup('<a href="' + feature.properties.url + '" target="_blank"><center><big><b>' + "[" + feature.properties.class + "]" +" " + feature.properties.name + '</b></big></a><br/>' + feature.properties.address)},
+
+                pointToLayer: function(feature, latlng) { 
+                    switch (feature.properties.category) {
+                                case '건물': return L.marker(latlng, {icon: buildingIcon}).addTo(part_1);
+                                case '학교': return L.marker(latlng, {icon: schoolIcon}).addTo(part_2);
+                                case '사무소': return L.marker(latlng, {icon: officeIcon}).addTo(part_3);
+                        }
+                    }
+                });
+
+ 
+  
+                //폴리건 데이터 위경도 좌표        
+                var latlngs1 = [[37.57192, 126.99171], [37.57133, 126.99184], [37.57141, 126.99202], [37.572, 126.99183]]; //역대합실
+                var latlngs2 = [[37.49571, 126.89757], [37.49546, 126.89765], [37.4952, 126.8973], [37.49559, 126.89712]]; //노상
+
+                //폴리건 데이터 그리기
+                var polygon = L.polygon(latlngs1, {color: "blue", weight:15, opacity:0.7}).addTo(part_3);
+                var polygon = L.polygon(latlngs2, {color: "red", weight:15, opacity:0.7}).addTo(part_4); 
+
+
+                //라인 데이터 위경도 좌표
+                var linelatlngs1 = [[37.56366, 126.98211], [37.56416, 126.98633]];
+                var linelatlngs2 = [[37.5291, 126.9295], [37.53716, 126.94227]];
+                var linelatlngs3 = [[37.5044, 127.0246], [37.4979, 127.0276]];
+                var linelatlngs4 = [[37.50697, 127.0566], [37.4979, 127.0276]];
+                var linelatlngs5 = [[37.4853, 126.9821], [37.4979, 127.0276]]; 
+
+                //라인 데이터 그리기
+                var polyline = L.polyline(linelatlngs1, {color: 'blue', weight:7, opacity:1.0}).addTo(part_1);
+                var polyline = L.polyline(linelatlngs2, {color: 'red', weight:7, opacity:1.0}).addTo(part_2);
+                var polyline = L.polyline(linelatlngs3, {color: 'green', weight:7, opacity:1.0}).addTo(part_3);
+                var polyline = L.polyline(linelatlngs4, {color: 'purple', weight:7, opacity:1.0}).addTo(part_4);
+                var polyline = L.polyline(linelatlngs5, {color: 'orange', weight:7, opacity:1.0}).addTo(part_5); 
+ 
+
+	    </script> 
+    </body>
+</html>
+
